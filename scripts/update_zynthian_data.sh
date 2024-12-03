@@ -42,6 +42,8 @@ if [ "$RESET_ZYNTHIAN_REPOSITORIES" == "1" ]; then
 	git merge --abort
 	git fetch
 	git reset --hard origin/$branch
+elif [[ $branch == $ZYNTHIAN_STABLE_BRANCH-* ]]; then
+  echo -e "Repository 'zynthian-data' frozen in tag release '$branch'!"
 else
 	git pull
 fi
@@ -91,6 +93,8 @@ fi
 if [ ! -d "$ZYNTHIAN_MY_DATA_DIR/presets/zynaddsubfx/presets" ]; then
 	mkdir "$ZYNTHIAN_MY_DATA_DIR/presets/zynaddsubfx/presets"
 fi
+# Update presets from zynthian-data repository
+cp -nr $ZYNTHIAN_DATA_DIR/presets/zynaddsubfx/banks/* /usr/share/zynaddsubfx/banks
 
 # Fix/Setup MOD-UI pedalboards directory: create dirs & symlinks, copy pedalboards ...
 if [ -d "$ZYNTHIAN_MY_DATA_DIR/mod-pedalboards" ]; then

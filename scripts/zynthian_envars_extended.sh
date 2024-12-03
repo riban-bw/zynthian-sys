@@ -73,10 +73,10 @@ echo "Virtualization: $VIRTUALIZATION"
 if [ -z "$RASPI" ]; then
 
 	# Hardware Architecture & Optimization Options
-	hw_architecture=`uname -m 2>/dev/null`
+	hw_architecture=$(uname -m 2>/dev/null)
 	if [ -e "/sys/firmware/devicetree/base/model" ]; then
 		# THIS MUST BE FIXED!!! IT DOESN'T WORK!
-		rbpi_version=`tr -d '\0' < /sys/firmware/devicetree/base/model`
+		rbpi_version=$(tr -d '\0' < /sys/firmware/devicetree/base/model)
 	else
 		rbpi_version="Unknown"
 	fi
@@ -95,24 +95,29 @@ if [ -z "$RASPI" ]; then
 		CFLAGS_UNSAFE="-funsafe-loop-optimizations -funsafe-math-optimizations -ffast-math"
 	fi
 
-	if [[ $rbpi_version =~ "Raspberry Pi 5" ]]; then
-		rbpi_version_number="5"
+	rbpi_words=($rbpi_version)
+	rbpi_version_number=${rbpi_words[2]}
+
+	if [[ $rbpi_version_number == "5" ]]; then
 		gpio_chip_device="/dev/gpiochip4"
+		if [[ ! -e "$gpio_chip_device" ]]; then
+			ln -s "/dev/gpiochip0" "$gpio_chip_device"
+		fi
 		i2c_device="/dev/i2c-1"
-	elif [[ $rbpi_version =~ "Raspberry Pi 4" ]]; then
-		rbpi_version_number="4"
+	elif [[ $rbpi_version_number == "4" ]]; then
 		gpio_chip_device="/dev/gpiochip0"
 		i2c_device="/dev/i2c-1"
-	elif [[ $rbpi_version =~ "Raspberry Pi 3" ]]; then
-		rbpi_version_number="3"
+	elif [[ $rbpi_version_number == "400" ]]; then
 		gpio_chip_device="/dev/gpiochip0"
 		i2c_device="/dev/i2c-1"
-	elif [[ $rbpi_version =~ "Raspberry Pi 2" ]]; then
-		rbpi_version_number="2"
+	elif [[ $rbpi_version_number == "3" ]]; then
+		gpio_chip_device="/dev/gpiochip0"
+		i2c_device="/dev/i2c-1"
+	elif [[ $rbpi_version_number == "2" ]]; then
 		gpio_chip_device="/dev/gpiochip0"
 		i2c_device="/dev/i2c-1"
 	else
-		rbpi_version_number="UNSUPPORTED"
+		rbpi_version="$rbpi_version (UNSUPPORTED!)"
 		gpio_chip_device="/dev/gpiochip0"
 		i2c_device="/dev/i2c-1"
 	fi
@@ -137,6 +142,14 @@ fi
 
 export DEBIAN_FRONTEND="noninteractive"
 export ZYNTHIAN_SETUP_APT_CLEAN="TRUE" # Set TRUE to clean /var/cache/apt during build, FALSE to leave alone
+
+#------------------------------------------------------------------------------
+# Software versions: Branches & Tags
+#------------------------------------------------------------------------------
+
+export ZYNTHIAN_STABLE_BRANCH="oram"
+export ZYNTHIAN_STABLE_TAG="2409"
+export ZYNTHIAN_TESTING_BRANCH="vangelis"
 
 #------------------------------------------------------------------------------
 # Enter python virtual environment

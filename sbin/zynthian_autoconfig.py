@@ -32,7 +32,6 @@ from subprocess import check_output
 # Hardware's config for several boards:
 # --------------------------------------------------------------------
 
-
 hardware_config = {
 	"Z2_MAIN_BETA": ["PCM1863@0x4A", "PCM5242@0x4D"],
 	"Z2_MAIN": ["PCM1863@0x4A", "PCM5242@0x4D", "RV3028@0x52"],
@@ -53,9 +52,9 @@ hardware_config = {
 
 
 def get_i2c_chips():
+	res = []
 	out = check_output("i2cdetect -y 1", shell=True).decode().split("\n")
 	if len(out) > 3:
-		res = []
 		for i in range(0, 8):
 			parts = out[i+1][4:].split(" ")
 			for j in range(0, 16):
@@ -119,28 +118,33 @@ def autodetect_config():
 
 # Get list of i2c chips
 i2c_chips = get_i2c_chips()
-print("Detected I2C Chips: {}".format(i2c_chips))
+print(f"Detected I2C Chips: {i2c_chips}")
 
 # Detect kit version
 config_name = autodetect_config()
-print("Detected {} kit!".format(config_name))
+print(f"Detected {config_name} kit!")
 
 # Configure Zynthian
 if config_name:
 	if config_name != os.environ.get('ZYNTHIAN_KIT_VERSION'):
-		print("Configuring Zynthian for {} ...".format(config_name))
+		print(f"Configuring Zynthian for {config_name} ...")
+
+		if config_name == "V5" and os.environ.get('RBPI_VERSION_NUMBER') == '5':
+			config_file = f"zynthian_envars_{config_name}_pi5.sh"
+		else:
+			config_file = f"zynthian_envars_{config_name}.sh"
 
 		zyn_dir = os.environ.get('ZYNTHIAN_DIR', "/zynthian")
 		zsys_dir = os.environ.get('ZYNTHIAN_SYS_DIR', "/zynthian/zynthian-sys")
 		zconfig_dir = os.environ.get('ZYNTHIAN_CONFIG_DIR', "/zynthian/config")
 		
-		check_output("cp -a '{}/config/zynthian_envars_{}.sh' '{}/zynthian_envars.sh'".format(zsys_dir, config_name, zconfig_dir), shell=True)
-		check_output("{}/scripts/update_zynthian_sys.sh".format(zsys_dir), shell=True)
-		check_output("rm -rf {}/zyncoder/build".format(zyn_dir), shell=True)
-		check_output("rm -rf {}/img".format(zconfig_dir), shell=True)
-		check_output("{}/scripts/delayed_action_flags.sh set reboot".format(zsys_dir), shell=True)
+		check_output(f"cp -a '{zsys_dir}/config/{config_file}' '{zconfig_dir}/zynthian_envars.sh'", shell=True)
+		check_output(f"{zsys_dir}/scripts/update_zynthian_sys.sh", shell=True)
+		check_output(f"rm -rf {zyn_dir}/zyncoder/build", shell=True)
+		check_output(f"rm -rf {zconfig_dir}/img", shell=True)
+		check_output(f"{zsys_dir}/scripts/delayed_action_flags.sh set reboot", shell=True)
 	else:
-		print("Zynthian already configured for {}.".format(config_name))
+		print(f"Zynthian already configured for {config_name}.")
 else:
 	print("Autoconfig for this HW footprint is not available.")
 

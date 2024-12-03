@@ -2,6 +2,10 @@
 
 # patchage
 
+if [[ "$RBPI_VERSION_NUMBER" == "3" ]]; then
+  exit 0 # RPi3 currently has a problem building patchage
+fi
+
 cd $ZYNTHIAN_SW_DIR
 
 if [ -d "patchage" ]; then
@@ -10,12 +14,10 @@ fi
 
 git clone https://github.com/drobilla/patchage.git
 cd patchage
-./meson setup build
+meson setup build
 cd build
-./meson compile
-./meson install
-./meson clean
-cd ..
-rm -rf build
-cd ..
-#rm -rf "patchage"
+meson compile -j 3
+meson install
+
+cd ../..
+rm -rf "patchage"

@@ -21,9 +21,14 @@
 # For a full copy of the GNU General Public License see the LICENSE.txt file.
 # ****************************************************************************
 
+# HW Testing Flags
+#export ZYNTHIAN_HW_TEST="V5_MAIN"
+#export ZYNTHIAN_UI_CONTROL_TEST_ENABLED="1"
+
 export ZYNTHIAN_KIT_VERSION="V5"
 
 # System Config
+export BOOTLOG="0"
 export ZYNTHIAN_CUSTOM_BOOT_CMDLINE=""
 export ZYNTHIAN_CUSTOM_CONFIG=""
 export ZYNTHIAN_OVERCLOCKING="Maximum"
@@ -35,13 +40,13 @@ export ZYNTHIAN_WIFI_MODE="off"
 export SOUNDCARD_NAME="V5 ADAC"
 export SOUNDCARD_CONFIG="dtoverlay=hifiberry-dacplusadcpro\nforce_eeprom_read=0"
 export SOUNDCARD_MIXER="PGA_Gain_Left,PGA_Gain_Right,ADC_Left_Input,ADC_Right_Input,Digital_0,Digital_1,Headphone"
-export JACKD_OPTIONS="-P 70 -t 2000 -s -d alsa -d hw:sndrpihifiberry -S -r 44100 -p 256 -n 2 -X raw"
+export JACKD_OPTIONS="-P 70 -s -S -d alsa -d hw:sndrpihifiberry -r 48000 -p 256 -n 2 -o 2 -i 2 -X raw"
 export ZYNTHIAN_DISABLE_RBPI_AUDIO="0"
 export ZYNTHIAN_RBPI_HEADPHONES="0"
 
 #Display Config
 export DISPLAY_NAME="MIPI DSI 800x480 (inverted)"
-export DISPLAY_CONFIG="display_lcd_rotate=2\ndtoverlay=rpi-ft5406,touchscreen-inverted-x=1,touchscreen-inverted-y=1\n"
+export DISPLAY_CONFIG="display_lcd_rotate=2"
 export DISPLAY_WIDTH="800"
 export DISPLAY_HEIGHT="480"
 export FRAMEBUFFER="/dev/fb0"
@@ -514,7 +519,6 @@ export ZYNTHIAN_WIRING_ZYNTOF03__MIDI_NUM="0"
 export ZYNTHIAN_WIRING_ZYNTOF04="NONE"
 export ZYNTHIAN_WIRING_ZYNTOF04__MIDI_CHAN="0"
 export ZYNTHIAN_WIRING_ZYNTOF04__MIDI_NUM="0"
-export zynthian_wiring_layout_saveas_fname=""
 
 # Directory Paths
 export ZYNTHIAN_DIR="/zynthian"

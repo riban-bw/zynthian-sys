@@ -24,6 +24,7 @@
 export ZYNTHIAN_KIT_VERSION="V4"
 
 # System Config
+export BOOTLOG="1"
 export ZYNTHIAN_CUSTOM_BOOT_CMDLINE=""
 export ZYNTHIAN_CUSTOM_CONFIG=""
 export ZYNTHIAN_OVERCLOCKING="None"
@@ -34,8 +35,8 @@ export ZYNTHIAN_WIFI_MODE="off"
 #Audio Config
 export SOUNDCARD_NAME="HifiBerry DAC+ ADC PRO"
 export SOUNDCARD_CONFIG="dtoverlay=hifiberry-dacplusadcpro"
-export SOUNDCARD_MIXER="Digital_0,Digital_1,PGA_Gain_Left,PGA_Gain_Right,ADC_Left_Input,ADC_Right_Input"
-export JACKD_OPTIONS="-P 70 -t 2000 -s -d alsa -d hw:sndrpihifiberry -r 44100 -p 256 -n 2 -X raw"
+export SOUNDCARD_MIXER="PGA_Gain_Left,PGA_Gain_Right,ADC_Left_Input,ADC_Right_Input,Digital_0,Digital_1"
+export JACKD_OPTIONS="-P 70 -s -S -d alsa -d hw:sndrpihifiberry -r 48000 -p 256 -n 2 -o 2 -i 2 -X raw"
 
 #Display Config
 export DISPLAY_NAME="ZynScreen 3.5 (v1)"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "$ZYNTHIAN_SYS_DIR/scripts/delayed_action_flags.sh"
+
 # Stop zynthian services
 if [[ "$VIRTUALIZATION" == "none" ]]; then
 	echo "Stopping zynthian services..."
@@ -27,19 +29,27 @@ done
 
 # Removing user data files
 echo "Removing user data files..."
-rm -f $ZYNTHIAN_MY_DATA_DIR/snapshots/last_state.zss
+rm -rf $ZYNTHIAN_MY_DATA_DIR/snapshots/*
 rm -rf $ZYNTHIAN_MY_DATA_DIR/preset_favorites/*
+rm -rf $ZYNTHIAN_MY_DATA_DIR/capture/*
+
+# Copy default snapshots and midi files
+echo "Copying initial user data files..."
+mkdir $ZYNTHIAN_MY_DATA_DIR/snapshots/000
+cp -a $ZYNTHIAN_DATA_DIR/snapshots/* $ZYNTHIAN_MY_DATA_DIR/snapshots/000
+cp -a $ZYNTHIAN_DATA_DIR/mid/* $ZYNTHIAN_MY_DATA_DIR/capture
+rm $ZYNTHIAN_MY_DATA_DIR/capture/test.mid
 
 # Restore factory config
 echo "Restoring factory config..."
+rm -rf $ZYNTHIAN_CONFIG_DIR/img
+#rm -rf $ZYNTHIAN_CONFIG_DIR/jalv/presets_*
 cp -a "$ZYNTHIAN_SYS_DIR/scripts/zynthian_envars.sh" $ZYNTHIAN_CONFIG_DIR
 cp -a "$ZYNTHIAN_SYS_DIR/config/default_midi_profile.sh" "$ZYNTHIAN_CONFIG_DIR/midi-profiles/default.sh"
 source $ZYNTHIAN_CONFIG_DIR/zynthian_envars.sh
 update_zynthian_sys.sh
 rm -rf $ZYNTHIAN_DIR/zyncoder/build
 $ZYNTHIAN_DIR/zyncoder/build.sh
-rm -rf $ZYNTHIAN_CONFIG_DIR/img
-#rm -rf $ZYNTHIAN_CONFIG_DIR/jalv/presets_*
 
 # Add First Boot Script to /etc/rc.local
 echo "Enabling first boot service..."
@@ -54,10 +64,17 @@ rm -f /root/.python_history
 rm -f /root/.history
 history -c && history -w
 
+# Disable automatic firmware updates. It causes boot issues!!
+#systemctl mask rpi-eeprom-update
+# Copy firmware to boot partition so it's installed on first boot
+#rpi_eeprom_reset.sh
+
+clean_all_flags
+
 # Message
 echo "The system is going to halt. Extract the SD card and dump the image."
 sleep 3
 sync
 
 # Power Off
-poweroff   
+poweroff

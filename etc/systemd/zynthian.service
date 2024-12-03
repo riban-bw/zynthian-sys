@@ -1,7 +1,6 @@
 [Unit]
 Description=Zynthian User Interface
 After=jack2.service
-Requires=jack2.service
 
 [Service]
 Environment=PATH=/usr/local/bin:#ZYNTHIAN_SYS_DIR#/sbin:/bin:/usr/bin:/sbin:/usr/sbin
@@ -16,12 +15,9 @@ WorkingDirectory=#ZYNTHIAN_UI_DIR#
 # Start X11 with keyboard autorepeat disable (-r) and disabling screen blanking (-s 0)
 ExecStart=startx ./zynthian.sh -- -r -s 0 #X11_SERVER_OPTIONS#
 TimeoutStopSec=20
-ExecStop=send_osc 1370 /CUIA/EXIT_UI
-ExecStop=sleep 10
-#ExecStop=killall -SIGTERM zynthian_gui.py
-#ExecStop=sh -c "/usr/bin/tail --pid=$MAINPID -f /dev/null"
+ExecStop=#ZYNTHIAN_SYS_DIR#/sbin/zynthian_stop.sh
 Restart=always
-RestartSec=5
+RestartSec=3
 
 [Install]
 WantedBy=multi-user.target

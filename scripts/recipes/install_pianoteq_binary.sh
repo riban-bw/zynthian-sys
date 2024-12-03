@@ -10,12 +10,12 @@ pack_fpath=$1
 
 cd $ZYNTHIAN_SW_DIR
 
-# Save current binary, deleting the older one
-if [ -f pianoteq6/pianoteq ]; then 
-	rm -rf pianoteq6.old
-	mv pianoteq6 pianoteq6.old
+# Save current version, deleting the older one
+if [ -f pianoteq/pianoteq ]; then
+	rm -rf pianoteq.old
+	mv pianoteq pianoteq.old
 else
-	rm -rf pianoteq6
+	rm -rf pianoteq
 fi
 
 if [ ${MACHINE_HW_NAME} = "armv7l" ]; then
@@ -26,10 +26,10 @@ fi
 
 # Uncompress new binary package and delete unused files
 7z x "$pack_fpath" \*/$armdir \*/Documentation \*/README_LINUX.txt \*/Licence.rtf
-mv Pianoteq* pianoteq6
+mv Pianoteq* pianoteq
 
 # Create symlink to binary
-cd pianoteq6
+cd pianoteq
 ln -s ./$armdir/Pianoteq* .
 rm -f *.lv2
 rm -f *.so
@@ -38,8 +38,14 @@ mv Pianoteq* pianoteq
 # Delete old LV2 plugin
 rm -rf $ZYNTHIAN_PLUGINS_DIR/lv2/Pianoteq*.lv2
 
+exit
+
+#----------------------------------------------------------
+# Don't install Pianoteq LV2 to avoid confusion
+#----------------------------------------------------------
+
 # Create symlink to LV2 plugin directory.
-ln -s $ZYNTHIAN_SW_DIR/pianoteq6/$armdir/*.lv2 $ZYNTHIAN_PLUGINS_DIR/lv2
+ln -s $ZYNTHIAN_SW_DIR/pianoteq/$armdir/*.lv2 $ZYNTHIAN_PLUGINS_DIR/lv2
 
 # Generate LV2 presets (Pianoteq >= v7.2.1)
 if [[ "$VIRTUALIZATION" == "none" ]]; then
@@ -49,3 +55,5 @@ if [[ "$VIRTUALIZATION" == "none" ]]; then
 		./pianoteq --export-lv2-presets $ZYNTHIAN_MY_DATA_DIR/presets/lv2
 	fi
 fi
+
+#----------------------------------------------------------

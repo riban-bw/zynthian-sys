@@ -24,6 +24,7 @@
 export ZYNTHIAN_KIT_VERSION="Custom"
 
 # System Config
+export BOOTLOG="1"
 export ZYNTHIAN_CUSTOM_BOOT_CMDLINE=""
 export ZYNTHIAN_CUSTOM_CONFIG=""
 export ZYNTHIAN_OVERCLOCKING="None"
@@ -32,14 +33,14 @@ export ZYNTHIAN_DISABLE_OTG="0"
 export ZYNTHIAN_WIFI_MODE="off"
 
 #Audio Config
-export SOUNDCARD_NAME="RBPi Headphones"
+export SOUNDCARD_NAME="Default"
 export SOUNDCARD_CONFIG="dtparam=audio=on\naudio_pwm_mode=2"
 export SOUNDCARD_MIXER="Headphone"
-export JACKD_OPTIONS="-P 70 -t 2000 -s -d alsa -d hw:Headphones -r 44100 -o 2 -p 512 -n 3 -X raw"
+export JACKD_OPTIONS="-P 70 -s -S -d alsa -d hw:0 -r 48000 -o 2 -p 512 -n 3 -X raw"
 
 #Display Config
-export DISPLAY_NAME="Generic HDMI Display"
-export DISPLAY_CONFIG="disable_overscan=1\ndtoverlay=vc4-kms-v3d\n"
+export DISPLAY_NAME="Generic HDMI/DSI Display"
+export DISPLAY_CONFIG=""
 export DISPLAY_WIDTH=""
 export DISPLAY_HEIGHT=""
 export FRAMEBUFFER="/dev/fb0"
@@ -47,9 +48,9 @@ export DISPLAY_KERNEL_OPTIONS=""
 
 # Zynthian Wiring Config
 export ZYNTHIAN_WIRING_LAYOUT="DUMMIES"
-export ZYNTHIAN_WIRING_ENCODER_A="0,0,0,0"
-export ZYNTHIAN_WIRING_ENCODER_B="0,0,0,0"
-export ZYNTHIAN_WIRING_SWITCHES="0,0,0,0"
+export ZYNTHIAN_WIRING_ENCODER_A="-1,-1,-1,-1"
+export ZYNTHIAN_WIRING_ENCODER_B="-1,-1,-1,-1"
+export ZYNTHIAN_WIRING_SWITCHES="-1,-1,-1,-1,-1,-1,-1,-1"
 export ZYNTHIAN_WIRING_MCP23017_I2C_ADDRESS=""
 export ZYNTHIAN_WIRING_MCP23017_INTA_PIN=""
 export ZYNTHIAN_WIRING_MCP23017_INTB_PIN=""
@@ -61,6 +62,7 @@ export ZYNTHIAN_UI_COLOR_ON="#ff0000"
 export ZYNTHIAN_UI_COLOR_PANEL_BG="#3a424d"
 export ZYNTHIAN_UI_FONT_FAMILY="Audiowide"
 export ZYNTHIAN_UI_FONT_SIZE="16"
+export ZYNTHIAN_UI_GRAPHIC_LAYOUT="Z2"
 export ZYNTHIAN_UI_ENABLE_CURSOR="1"
 export ZYNTHIAN_UI_TOUCH_WIDGETS="1"
 export ZYNTHIAN_UI_RESTORE_LAST_STATE="1"
@@ -71,8 +73,9 @@ export ZYNTHIAN_UI_SHOW_CPU_STATUS="0"
 export ZYNTHIAN_UI_ONSCREEN_BUTTONS="1"
 export ZYNTHIAN_UI_VISIBLE_MIXER_STRIPS="0"
 export ZYNTHIAN_UI_MULTICHANNEL_RECORDER="1"
+export ZYNTHIAN_UI_POWER_SAVE_MINUTES="10"
 export ZYNTHIAN_VNCSERVER_ENABLED="0"
-export ZYNTHIAN_MIDI_PLAY_LOOP="0"
+export ZYNTHIAN_MIDI_PLAY_LOOP="1"
 
 # MIDI system configuration
 export ZYNTHIAN_SCRIPT_MIDI_PROFILE="/zynthian/config/midi-profiles/default.sh"
