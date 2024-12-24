@@ -33,19 +33,16 @@ source "$ZYNTHIAN_SYS_DIR/scripts/delayed_action_flags.sh"
 # Pull from repositories ...
 #------------------------------------------------------------------------------
 
-echo "Updating zynthian-data..."
-cd "$ZYNTHIAN_DATA_DIR"
-branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
-git checkout .
-git clean -f
-if [ "$RESET_ZYNTHIAN_REPOSITORIES" == "1" ]; then
-	git merge --abort
-	git fetch
-	git reset --hard origin/$branch
-elif [[ $branch == $ZYNTHIAN_STABLE_BRANCH-* ]]; then
-  echo -e "Repository 'zynthian-data' frozen in tag release '$branch'!"
-else
-	git pull
+repo_dir=zynthian-data
+echo "Checking '$repo_dir' for updates..."
+git -C /zynthian/$repo_dir fetch --tags --all --prune --force
+BRANCH=`git -C /zynthian/$repo_dir symbolic-ref -q --short HEAD || git -C /zynthian/$repo_dir describe --tags --exact-match`
+LOCAL_HASH=`git -C /zynthian/$repo_dir rev-parse "$BRANCH"`
+REMOTE_HASH=`git -C /zynthian/$repo_dir ls-remote origin "$BRANCH" | awk '{ print $1 }'`
+if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
+echo Updating $BRANCH
+git -C /zynthian/$repo_dir fetch -f origin --tags
+git -C /zynthian/$repo_dir checkout $BRANCH
 fi
 
 #------------------------------------------------------------------------------

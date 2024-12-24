@@ -7,7 +7,7 @@
 # + Reconfigure system.
 # + Reboot when needed.
 # 
-# Copyright (C) 2015-2019 Fernando Moyano <jofemodo@zynthian.org>
+# Copyright (C) 2015-2024 Fernando Moyano <jofemodo@zynthian.org>
 #
 #******************************************************************************
 # 
@@ -38,52 +38,20 @@ source "$ZYNTHIAN_SYS_DIR/scripts/delayed_action_flags.sh"
 powersave_control.sh off
 
 #------------------------------------------------------------------------------
-# If attached to stable tag-releases, check if already in the last tag
+# Update from git - only if upstream has changed
 #------------------------------------------------------------------------------
-
-if [[ "$ZYNTHIAN_STABLE_TAG" == "last" ]]; then
-  for repo_dir in 'zynthian-ui' 'zynthian-sys' 'zynthian-webconf' 'zynthian-data' 'zyncoder' ; do
-		echo "Checking '$repo_dir' for stable tag-releases ..."
-    pushd /zynthian/$repo_dir > /dev/null
-    # Take last tag
-    #git remote update origin --prune
-    git fetch --tags --all --prune --force
-    readarray -t stags <<<$(sort <<<$(git tag -l $ZYNTHIAN_STABLE_BRANCH-*))
-    last_stag=${stags[-1]}
-    echo -e "\tlast release-tag: $last_stag"
-    # Get current branch
-    branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
-    echo -e "\tcurrent branch: $branch"
-    # Upgrade to last release tag if needed
-    if [[ "$branch" != "$last_stag" ]]; then
-      echo -e "Upgrading '$repo_dir' to tag release '$last_stag' ..."
-      git checkout .
-      git branch -D $last_stag
-      git checkout tags/$last_stag -b $last_stag
-      git branch -D $branch
-    fi
-    popd > /dev/null
-  done
-
-#------------------------------------------------------------------------------
-# Pull from zynthian-sys repository ...
-#------------------------------------------------------------------------------
-else
-  cd $ZYNTHIAN_SYS_DIR
-  export ZYNTHIAN_SYS_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
-  echo "Updating zynthian-sys ($ZYNTHIAN_SYS_BRANCH)..."
-  git checkout .
-  git clean -f
-  if [ "$RESET_ZYNTHIAN_REPOSITORIES" == "1" ]; then
-    git merge --abort
-    git fetch
-    git reset --hard origin/$ZYNTHIAN_SYS_BRANCH
-  elif [[ $ZYNTHIAN_SYS_BRANCH == $ZYNTHIAN_STABLE_BRANCH-* ]]; then
-    echo -e "Repository 'zynthian-sys' frozen in tag release '$ZYNTHIAN_SYS_BRANCH'!"
-  else
-    git pull
+for repo_dir in 'zynthian-ui' 'zynthian-sys' 'zynthian-webconf' 'zynthian-data' 'zyncoder' ; do
+  echo "Checking '$repo_dir' for updates..."
+  git -C /zynthian/$repo_dir fetch --tags --all --prune --force
+  BRANCH=`git -C /zynthian/$repo_dir symbolic-ref -q --short HEAD || git -C /zynthian/$repo_dir describe --tags --exact-match`
+  LOCAL_HASH=`git -C /zynthian/$repo_dir rev-parse "$BRANCH"`
+  REMOTE_HASH=`git -C /zynthian/$repo_dir ls-remote origin "$BRANCH" | awk '{ print $1 }'`
+  if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
+    echo Updating $BRANCH
+    git -C /zynthian/$repo_dir fetch -f origin --tags
+    git -C /zynthian/$repo_dir checkout $BRANCH
   fi
-fi
+done
 
 #------------------------------------------------------------------------------
 # Call update subscripts ...
@@ -96,7 +64,12 @@ cd $ZYNTHIAN_SYS_DIR/scripts
 ./update_zynthian_sys.sh
 ./update_zynthian_code.sh
 
+# Force restart of UI & webconf services
+set_restart_ui_flag
+set_restart_webconf_flag
+
 run_flag_actions
+sync
 
 echo "Update Complete."
 
