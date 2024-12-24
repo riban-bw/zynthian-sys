@@ -34,7 +34,7 @@ source "$ZYNTHIAN_SYS_DIR/scripts/delayed_action_flags.sh"
 
 echo "Updating zyncoder..."
 cd $ZYNTHIAN_DIR/zyncoder
-branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+branch=`git symbolic-ref -q --short HEAD || git describe --tags --exact-match`
 git checkout .
 git clean -f
 if [ "$RESET_ZYNTHIAN_REPOSITORIES" == "1" ]; then
@@ -42,8 +42,6 @@ if [ "$RESET_ZYNTHIAN_REPOSITORIES" == "1" ]; then
 	git fetch
 	git reset --hard origin/$branch
 	ui_changed=1
-elif [[ $branch == $ZYNTHIAN_STABLE_BRANCH-* ]]; then
-  echo -e "Repository 'zyncoder' frozen in tag release '$branch'!"
 else
 	git pull | grep -q -v 'Already up.to.date.' && ui_changed=1
 fi
@@ -51,7 +49,7 @@ fi
 
 echo "Updating zynthian-ui..."
 cd $ZYNTHIAN_UI_DIR
-branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+branch=`git symbolic-ref -q --short HEAD || git describe --tags --exact-match`
 git checkout .
 git clean -f
 if [ "$RESET_ZYNTHIAN_REPOSITORIES" == "1" ]; then
@@ -59,8 +57,6 @@ if [ "$RESET_ZYNTHIAN_REPOSITORIES" == "1" ]; then
 	git fetch
 	git reset --hard origin/$branch
 	ui_changed=1
-elif [[ $branch == $ZYNTHIAN_STABLE_BRANCH-* ]]; then
-  echo -e "Repository 'zynthian-ui' frozen in tag release '$branch'!"
 else
 	git pull | grep -q -v 'Already up.to.date.' && ui_changed=1
 fi
@@ -68,7 +64,7 @@ find ./zynlibs -type f -name build.sh -exec {} \;
 
 echo "Updating zynthian-webconf..."
 cd $ZYNTHIAN_DIR/zynthian-webconf
-branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+branch=`git symbolic-ref -q --short HEAD || git describe --tags --exact-match`
 git checkout .
 git clean -f
 if [ "$RESET_ZYNTHIAN_REPOSITORIES" == "1" ]; then
@@ -76,8 +72,6 @@ if [ "$RESET_ZYNTHIAN_REPOSITORIES" == "1" ]; then
 	git fetch
 	git reset --hard origin/$branch
 	webconf_changed=1
-elif [[ $branch == $ZYNTHIAN_STABLE_BRANCH-* ]]; then
-  echo -e "Repository 'zynthian-webconf' frozen in tag release '$branch'!"
 else
 	git pull | grep -q -v 'Already up.to.date.' && webconf_changed=1
 fi
