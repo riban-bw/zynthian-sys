@@ -3,7 +3,7 @@
 
 # Check if the number of arguments is not equal to 1
 if [ "$#" -ne 1 ]; then
-    echo Error: Expects name of point release as command line argument, e.g. oram-2024.1.0.0
+    echo Error: Expects name of point release as command line argument, e.g. oram-2024.1.0
     exit 1
 fi
 
