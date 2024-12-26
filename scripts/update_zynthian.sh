@@ -42,7 +42,7 @@ powersave_control.sh off
 #------------------------------------------------------------------------------
 for repo_dir in 'zynthian-ui' 'zynthian-sys' 'zynthian-webconf' 'zynthian-data' 'zyncoder' ; do
   echo "Checking '$repo_dir' for updates..."
-  git -C /zynthian/$repo_dir fetch --tags --all --prune --force
+  git -C /zynthian/$repo_dir fetch --tags --all --prune --prune-tags --force
   BRANCH=`git -C /zynthian/$repo_dir symbolic-ref -q --short HEAD || git -C /zynthian/$repo_dir describe --tags --exact-match`
   LOCAL_HASH=`git -C /zynthian/$repo_dir rev-parse "$BRANCH"`
   REMOTE_HASH=`git -C /zynthian/$repo_dir ls-remote origin "$BRANCH" | awk '{ print $1 }'`
