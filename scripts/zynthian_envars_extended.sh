@@ -148,7 +148,7 @@ export ZYNTHIAN_SETUP_APT_CLEAN="TRUE" # Set TRUE to clean /var/cache/apt during
 #------------------------------------------------------------------------------
 
 export ZYNTHIAN_STABLE_BRANCH="oram"
-export ZYNTHIAN_STABLE_TAG="2409"
+export ZYNTHIAN_STABLE_TAG="oram-2409"
 export ZYNTHIAN_TESTING_BRANCH="vangelis"
 
 #------------------------------------------------------------------------------
